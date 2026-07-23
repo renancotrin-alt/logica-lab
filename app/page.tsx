@@ -294,9 +294,10 @@ export default function Home() {
   return (
     <main className="app-shell">
       <header className="topbar">
-        <div className="brand"><span className="brand-mark">{`{ }`}</span><div><strong>Lógica</strong><small>pense primeiro, codifique depois</small></div></div>
-        <label className="language-picker"><span>Linguagem</span><select value={language} onChange={(event) => switchLanguage(event.target.value as LanguageId)}>{languages.map((item) => <option key={item.id} value={item.id}>{item.label} · {item.group}</option>)}</select></label>
+        <div className="brand"><span className="brand-mark">L/01</span><div><strong>LÓGICA LAB</strong><small>SISTEMA DE TREINO / EST. 2026</small></div></div>
+        <label className="language-picker"><span>LINGUAGEM DE OPERAÇÃO</span><select value={language} onChange={(event) => switchLanguage(event.target.value as LanguageId)}>{languages.map((item) => <option key={item.id} value={item.id}>{item.label} · {item.group}</option>)}</select></label>
         <div className="progress-wrap"><span>{completedLessons} de {lessons.length} conceitos</span><div className="progress"><i style={{ width: `${progress}%` }} /></div><b>{progress}%</b></div>
+        <div className="system-code" aria-hidden="true">SYS.LOGIC / BR-SP<br />SESSION_001</div>
       </header>
 
       <section className="workspace">
@@ -307,13 +308,15 @@ export default function Home() {
         </aside>
 
         <section className="chat-panel">
-          <div className="panel-title"><div className="tutor-avatar">L</div><div><strong>Tutor de raciocínio</strong><small><i /> acompanhando seus passos</small></div></div>
-          <div className="messages">{messages.map((message, index) => <div key={index} className={`message ${message.role}`}><span>{message.text}</span></div>)}<div ref={chatEnd} /></div>
+          <div className="mascot-stage"><div className="mascot-copy"><span>OPERADOR / NÓ</span><strong>SEU PARCEIRO<br />DE RACIOCÍNIO</strong><small>UNIDADE TUTORIAL 01</small></div><img src="/no-mascot-v1.png" alt="Nó, gato mascote do tutor de lógica" /></div>
+          <div className="panel-title"><div className="tutor-avatar"><img src="/no-mascot-v1.png" alt="" /></div><div><strong>NÓ / TUTOR DE RACIOCÍNIO</strong><small><i /> CANAL ATIVO</small></div></div>
+          <div className="messages">{messages.map((message, index) => <div key={index} className={`message ${message.role}`}>{message.role === "tutor" && <img className="message-avatar" src="/no-mascot-v1.png" alt="" />}<span>{message.text}</span></div>)}<div ref={chatEnd} /></div>
           <div className="quick-actions"><button onClick={askHint}>💡 Dica gradual</button><button onClick={() => setMessages((old) => [...old, { role: "tutor", text: `Você está treinando ${lesson.concept}. Isso existe em várias linguagens.` }])}>◎ O que estou treinando?</button></div>
           <div className="chat-input"><input value={input} onChange={(event) => setInput(event.target.value)} onKeyDown={(event) => event.key === "Enter" && sendMessage()} placeholder="Conte onde você travou..." aria-label="Mensagem para o tutor" /><button onClick={sendMessage} aria-label="Enviar mensagem">↑</button></div>
         </section>
 
         <section className="practice-panel">
+          <div className="practice-index" aria-hidden="true"><span>MODULE</span><b>0{lessonIndex + 1}</b><small>LOGIC / CORE</small></div>
           <div className="challenge-card">
             <div className="eyebrow"><span>DESAFIO {lessonIndex + 1}</span><small>{lesson.level}</small><small className={languageInfo.executable ? "mode-chip" : "mode-chip support"}>{languageInfo.group}</small></div>
             <h1>{lesson.title}</h1><p>{lesson.statement}</p>
