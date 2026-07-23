@@ -199,6 +199,112 @@ function reviewSupportingLanguage(code: string, language: LanguageId, lesson: Le
     : { ok: false, lines: [`Ainda falta uma estrutura essencial de ${label}.`, snippets[lesson.id][language].hint] };
 }
 
+function normalizeQuestion(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+function describeCodeState(code: string, language: LanguageId, lesson: Lesson) {
+  const normalizedCode = normalizeQuestion(code);
+  const stillHasPlaceholder = /pass|escreva|caminho|atualize|guarde|calcule|condicao|complete|--/.test(normalizedCode);
+  const hasReturn = /return|retorne/.test(normalizedCode);
+
+  if (stillHasPlaceholder && !hasReturn) {
+    return `Seu código ainda está no ponto inicial: o espaço do comentário precisa ser substituído pelo passo principal. Para este desafio, pense em “${lesson.logicSteps[1]}”.`;
+  }
+  if (!hasReturn && ["pseudocode", "python", "javascript", "typescript", "java"].includes(language)) {
+    return `Ainda não encontrei o comando que devolve a resposta. Em ${languages.find((item) => item.id === language)?.label}, procure onde usar ${language === "pseudocode" ? "RETORNE" : "return"}.`;
+  }
+  return "Sua estrutura já tem uma tentativa de solução. Execute os testes e me diga qual valor foi esperado e qual foi recebido; assim localizamos exatamente o passo que precisa mudar.";
+}
+
+function buildTutorAnswer(
+  question: string,
+  code: string,
+  lesson: Lesson,
+  language: LanguageId,
+  result: RunResult | null,
+) {
+  const lower = normalizeQuestion(question);
+  const languageInfo = languages.find((item) => item.id === language)!;
+  const snippet = snippets[lesson.id][language];
+  const asksAboutExample = /triplo|exemplo|primeiro teste|isso e.*teste|e um teste/.test(lower);
+  const asksAboutCalculation = /2\s*\+\s*2|multiplicar por 2|vezes 2|fazer.*calculo|colocar.*resultado/.test(lower);
+  const asksWhere = /onde|fim da funcao|dentro da funcao|em qual linha|aonde/.test(lower);
+  const asksAboutTests = /\bteste\b|valor esperado|recebido/.test(lower);
+  const asksAboutCode = /meu codigo|meu código|o que escrevi|analise|explique.*codigo|explique.*código/.test(lower);
+  const asksWhy = /por que|porque|pra que|para que/.test(lower);
+
+  if (lesson.id === "double" && asksAboutExample) {
+    return [
+      "Não: o código do triplo é um EXEMPLO parecido, não é o primeiro teste.",
+      "",
+      "Ele mostra este padrão:",
+      "1. A função recebe um valor chamado numero.",
+      "2. Faz uma transformação com esse valor.",
+      "3. Devolve o novo valor com RETORNE.",
+      "",
+      "No exemplo, a transformação é numero × 3. No seu desafio, troque a ideia de triplo pela ideia de dobro: numero × 2.",
+    ].join("\n");
+  }
+
+  if (lesson.id === "double" && asksAboutCalculation) {
+    return [
+      "Você não deve escrever 2 + 2 nem colocar um resultado fixo.",
+      "",
+      "O nome numero representa qualquer entrada. Se entrar 2, o resultado será 4; se entrar 7, será 14.",
+      "",
+      "Dentro da função, antes de FIM FUNÇÃO, escreva:",
+      "RETORNE numero * 2",
+      "",
+      "Depois clique em Executar e testar. O sistema fará vários cálculos automaticamente.",
+    ].join("\n");
+  }
+
+  if (asksWhere) {
+    return language === "pseudocode"
+      ? `Escreva o passo principal entre “FUNÇÃO ${lesson.functionName}(...)” e “FIM FUNÇÃO”. Substitua o comentário, sem escrever nada depois de FIM FUNÇÃO.\n\nPista para este desafio: ${snippet.hint}`
+      : `Escreva dentro da função, no lugar do comentário ou do “pass”. Não coloque a resposta depois da chave ou do fim da função.\n\nPista em ${languageInfo.label}: ${snippet.hint}`;
+  }
+
+  if (asksAboutTests) {
+    const examples = lesson.tests
+      .slice(0, 2)
+      .map((test) => `entrada ${JSON.stringify(test.args)} → esperado ${JSON.stringify(test.expected)}`)
+      .join("\n");
+    return `Os testes não são linhas que você precisa escrever. Eles são verificações automáticas feitas quando você clica em Executar e testar.\n\nNeste desafio, alguns testes são:\n${examples}\n\nSeu trabalho é escrever uma regra que funcione para todos eles.`;
+  }
+
+  if (asksAboutCode) {
+    return describeCodeState(code, language, lesson);
+  }
+
+  if (lower.includes("erro") || result?.ok === false) {
+    const testFeedback = result?.lines?.[0] ? `\n\nÚltimo retorno: ${result.lines[0]}` : "";
+    return `Vamos depurar sem apagar tudo. Primeiro confirme se a função recebe os valores pedidos. Depois verifique a transformação “${lesson.logicSteps[1]}” e, por último, se você devolveu o resultado.${testFeedback}\n\n${describeCodeState(code, language, lesson)}`;
+  }
+
+  if (asksWhy) {
+    return `Porque o objetivo não é decorar uma resposta, e sim criar uma regra. A entrada muda, mas os passos continuam iguais: ${lesson.logicSteps.join(" → ")}. É essa regra que os testes verificam.`;
+  }
+
+  if (lower.includes("linguagem")) {
+    return `A lógica deste exercício não muda quando você troca de linguagem: ${lesson.logicSteps.join(" → ")}. Em ${languageInfo.label}, muda apenas a forma de escrever esses passos.`;
+  }
+
+  if (/nao sei|estou perdido|travei|comecar|primeiro passo/.test(lower)) {
+    return `Vamos fazer uma etapa por vez.\n\n1. Entrada: ${lesson.logicSteps[0]}.\n2. Transformação: ${lesson.logicSteps[1]}.\n3. Saída: ${lesson.logicSteps[2]}.\n\nAgora olhe seu código e encontre o comentário vazio. É ali que você traduz o passo 2 para ${languageInfo.label}.`;
+  }
+
+  if (lower.includes("resposta")) {
+    return `Posso aproximar a dica sem pular seu raciocínio. Para “${lesson.title}”, a estrutura que falta é: ${snippet.hint}\n\nAntes de copiar, me diga com suas palavras o que deve acontecer com a entrada.`;
+  }
+
+  return `Entendi sua dúvida dentro do desafio “${lesson.title}”. Você está usando ${languageInfo.label} e precisa representar estes passos: ${lesson.logicSteps.join(" → ")}.\n\n${describeCodeState(code, language, lesson)}\n\nVocê pode me perguntar “isso é exemplo ou teste?”, “onde escrevo?” ou “explique meu código”.`;
+}
+
 export default function Home() {
   const [lessonIndex, setLessonIndex] = useState(0);
   const [language, setLanguage] = useState<LanguageId>("pseudocode");
@@ -255,18 +361,16 @@ export default function Home() {
     setHintIndex((value) => Math.min(value + 1, hints.length - 1));
   }
 
-  function sendMessage() {
-    const text = input.trim();
+  function askTutor(question: string) {
+    const text = question.trim();
     if (!text) return;
-    const lower = text.toLowerCase();
-    let answer = `Neste desafio, a lógica é: ${lesson.logicSteps.join(" → ")}. Tente localizar qual desses passos ainda não apareceu no seu código.`;
-    if (lower.includes("dica") || lower.includes("ajuda")) answer = snippet.hint;
-    else if (lower.includes("erro")) answer = "Leia o primeiro teste que falhou: compare o valor esperado com o recebido. Isso mostra em qual transformação sua lógica se desviou.";
-    else if (lower.includes("linguagem")) answer = "Python, JavaScript, TypeScript e Java expressam algoritmos. SQL consulta dados; HTML estrutura, CSS estiliza e Markdown documenta. O seletor permite experimentar todos sem misturar seus papéis.";
-    else if (lower.includes("não sei") || lower.includes("nao sei")) answer = `Escreva primeiro em português: ${lesson.logicSteps.join(", depois ")}. Só então traduza uma frase por vez para ${languageInfo.label}.`;
-    else if (lower.includes("resposta")) answer = "Vou preservar seu aprendizado: use o exemplo parecido e peça dicas graduais. A solução completa aparece quando você consegue explicar os passos.";
+    const answer = buildTutorAnswer(text, code, lesson, language, result);
     setMessages((old) => [...old, { role: "student", text }, { role: "tutor", text: answer }]);
     setInput("");
+  }
+
+  function sendMessage() {
+    askTutor(input);
   }
 
   async function execute() {
@@ -313,7 +417,7 @@ export default function Home() {
           <div className="mascot-stage"><div className="mascot-copy"><span>OPERADOR / NÓ</span><strong>SEU PARCEIRO<br />DE RACIOCÍNIO</strong><small>UNIDADE TUTORIAL 01</small></div><img src="/no-mascot-v1.png" alt="Nó, gato mascote do tutor de lógica" /></div>
           <div className="panel-title"><div className="tutor-avatar"><img src="/no-mascot-v1.png" alt="" /></div><div><strong>NÓ / TUTOR DE RACIOCÍNIO</strong><small><i /> CANAL ATIVO</small></div></div>
           <div className="messages">{messages.map((message, index) => <div key={index} className={`message ${message.role}`}>{message.role === "tutor" && <img className="message-avatar" src="/no-mascot-v1.png" alt="" />}<span>{message.text}</span></div>)}<div ref={chatEnd} /></div>
-          <div className="quick-actions"><button onClick={askHint}>💡 Dica gradual</button><button onClick={() => setMessages((old) => [...old, { role: "tutor", text: `Você está treinando ${lesson.concept}. Isso existe em várias linguagens.` }])}>◎ O que estou treinando?</button></div>
+          <div className="quick-actions"><button onClick={askHint}>💡 Dica gradual</button><button onClick={() => askTutor("Isso é exemplo ou teste?")}>◫ Exemplo ou teste?</button><button onClick={() => askTutor("Explique meu código")}>⌁ Explique meu código</button><button onClick={() => setMessages((old) => [...old, { role: "tutor", text: `Você está treinando ${lesson.concept}. Isso existe em várias linguagens.` }])}>◎ O que estou treinando?</button></div>
           <div className="chat-input"><input value={input} onChange={(event) => setInput(event.target.value)} onKeyDown={(event) => event.key === "Enter" && sendMessage()} placeholder="Conte onde você travou..." aria-label="Mensagem para o tutor" /><button onClick={sendMessage} aria-label="Enviar mensagem">↑</button></div>
         </section>
 

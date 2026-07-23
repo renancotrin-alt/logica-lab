@@ -72,7 +72,7 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-
 .messages { padding: 16px 14px; flex: 1; overflow-y: auto; min-height: 210px; max-height: calc(100vh - 485px); background-image: linear-gradient(90deg, transparent 33px, rgba(16,16,16,.1) 33px, rgba(16,16,16,.1) 34px, transparent 34px); }
 .message { display: flex; align-items: flex-start; gap: 7px; margin-bottom: 13px; }
 .message-avatar { width: 27px; height: 27px; flex: 0 0 27px; object-fit: cover; object-position: 50% 7%; transform: none; background: #c6c4bd; border: 1px solid var(--black); }
-.message span { max-width: 86%; padding: 10px 11px; border: 1px solid var(--black); font-size: 11px; line-height: 1.5; }
+.message span { max-width: 86%; padding: 10px 11px; border: 1px solid var(--black); font-size: 11px; line-height: 1.5; white-space: pre-line; }
 .message.tutor span { background: var(--white); }
 .message.student { justify-content: flex-end; }
 .message.student span { background: var(--black); color: var(--white); }
