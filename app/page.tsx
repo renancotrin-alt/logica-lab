@@ -223,7 +223,9 @@ export default function Home() {
       setCode(snippets.double[savedLanguage].starter);
     }
   }, []);
-  useEffect(() => chatEnd.current?.scrollIntoView({ behavior: "smooth" }), [messages]);
+  useEffect(() => {
+    chatEnd.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const completedLessons = useMemo(() => new Set(completed.map((item) => item.split(":")[1])).size, [completed]);
   const progress = Math.round((completedLessons / lessons.length) * 100);
