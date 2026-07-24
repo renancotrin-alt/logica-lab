@@ -335,6 +335,11 @@ export default function Home() {
 
   const completedLessons = useMemo(() => new Set(completed.map((item) => item.split(":")[1])).size, [completed]);
   const progress = Math.round((completedLessons / lessons.length) * 100);
+  const answerLine = useMemo(() => {
+    const lines = snippet.starter.split("\n");
+    const index = lines.findIndex((line) => /escreva|compare|caminho|guarde|atualize|calcule|condi[cç][aã]o|complete|pass|\?/.test(normalizeQuestion(line)));
+    return Math.max(index, 1);
+  }, [snippet.starter]);
 
   function switchLanguage(next: LanguageId) {
     setLanguage(next);
@@ -432,8 +437,21 @@ export default function Home() {
           </div>
 
           <div className="editor-heading"><span><b>3</b><strong>Agora escreva você</strong></span><small>arquivo: desafio.{languageInfo.extension}</small></div>
-          <div className="editor-card"><div className="editor-top"><span><i className="dot red" /><i className="dot yellow" /><i className="dot green" /> desafio.{languageInfo.extension}</span><button onClick={() => setCode(snippet.starter)}>Recomeçar</button></div><div className="editor-body"><div className="line-numbers">{Array.from({ length: Math.max(code.split("\n").length, 5) }, (_, i) => <span key={i}>{i + 1}</span>)}</div><textarea value={code} onChange={(event) => setCode(event.target.value)} spellCheck={false} aria-label={`Editor de ${languageInfo.label}`} /></div></div>
-          {result && <div className={`result-box ${result.ok ? "success" : "failure"}`}><strong>{result.ok ? "Sua lógica funcionou!" : "Vamos ajustar um passo"}</strong>{result.lines.map((line, index) => <span key={index}>{line}</span>)}</div>}
+          <div className="editor-card">
+            <div className="editor-top"><span><i className="dot red" /><i className="dot yellow" /><i className="dot green" /> desafio.{languageInfo.extension}</span><button onClick={() => setCode(snippet.starter)}>Recomeçar</button></div>
+            <div className="editor-body">
+              <div className="answer-line-highlight" style={{ top: `${16 + answerLine * 18.7}px` }} aria-hidden="true"><span>RESPONDA AQUI · LINHA {answerLine + 1}</span></div>
+              <div className="line-numbers">{Array.from({ length: Math.max(code.split("\n").length, 5) }, (_, i) => <span key={i}>{i + 1}</span>)}</div>
+              <textarea value={code} onChange={(event) => setCode(event.target.value)} spellCheck={false} aria-label={`Editor de ${languageInfo.label}`} />
+            </div>
+            <div className={`terminal-panel ${result ? (result.ok ? "success" : "failure") : ""}`}>
+              <div className="terminal-tabs"><span className="active">CASOS DE TESTE</span><span>CONSOLE</span></div>
+              <div className="terminal-content">
+                <div><small>SAÍDA</small>{result ? <><strong>{result.ok ? "Sua lógica funcionou!" : "Vamos ajustar um passo"}</strong>{result.lines.map((line, index) => <code key={index}>{line}</code>)}</> : <code className="terminal-idle">Aguardando você executar o código...</code>}</div>
+                <div><small>FLUXO ESPERADO</small><code>{lesson.logicSteps.join(" → ")}</code></div>
+              </div>
+            </div>
+          </div>
           <div className="run-row"><button className="run-button" onClick={execute} disabled={running}><span>▶</span>{running ? (language === "python" ? "Carregando Python..." : "Verificando...") : languageInfo.executable ? "Executar e testar" : "Analisar estrutura"}</button><small>{languageInfo.executable ? "Os testes comparam sua saída com exemplos esperados." : "Este modo ensina o papel da tecnologia na solução."}</small></div>
         </section>
       </section>

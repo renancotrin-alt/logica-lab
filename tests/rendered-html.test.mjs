@@ -47,9 +47,14 @@ test("keeps contextual tutoring and safe chat scrolling", async () => {
   assert.match(page, /Não: o código do triplo é um EXEMPLO parecido/);
   assert.match(page, /Você não deve escrever 2 \+ 2/);
   assert.match(page, /describeCodeState\(code, language, lesson\)/);
+  assert.match(page, /className="answer-line-highlight"/);
+  assert.match(page, /className=\{`terminal-panel/);
+  assert.match(page, /RESPONDA AQUI · LINHA/);
   assert.match(
     page,
     /useEffect\(\(\) => \{\s*chatEnd\.current\?\.scrollIntoView\(\{ behavior: "smooth" \}\);\s*\}, \[messages\]\);/,
   );
   assert.match(css, /\.message span \{[^}]*white-space:\s*pre-line;/);
+  assert.match(css, /\.editor-card \{[^}]*background:\s*var\(--terminal\)/);
+  assert.match(css, /\.answer-line-highlight \{[^}]*var\(--code-green\)/);
 });

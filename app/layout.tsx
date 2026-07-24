@@ -12,13 +12,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Lógica Lab — Pense, teste, aprenda",
     description: "Aprenda a resolver problemas e traduza a mesma lógica para diferentes linguagens.",
-    images: [{ url: "/og-v4.png", width: 1536, height: 1024, alt: "Lógica Lab com o mascote Nó em estética industrial futurista" }],
+    images: [{ url: "/og-v5.png", width: 1536, height: 1024, alt: "Lógica Lab com o mascote Nó, exercício guiado e editor de código" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Lógica Lab — Pense, teste, aprenda",
     description: "Aprenda a resolver problemas e codifique em diferentes linguagens.",
-    images: ["/og-v4.png"],
+    images: ["/og-v5.png"],
   },
 };
 
