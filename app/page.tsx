@@ -60,6 +60,36 @@ const lessons: Lesson[] = [
     logicSteps: ["Começar o total em zero", "Percorrer cada número", "Somar ao total e devolver"], functionName: "somar",
     tests: [{ args: [[1, 2, 3]], expected: 6 }, { args: [[]], expected: 0 }, { args: [[10, -3, 2]], expected: 9 }],
   },
+  {
+    id: "sign", title: "Positivo, negativo ou zero", level: "Condições",
+    statement: "Receba um número e classifique-o como positivo, negativo ou zero.", concept: "múltiplas decisões e ordem das condições",
+    logicSteps: ["Receber o número", "Comparar com zero", "Devolver a classificação"], functionName: "classificarNumero",
+    tests: [{ args: [8], expected: "positivo" }, { args: [-3], expected: "negativo" }, { args: [0], expected: "zero" }],
+  },
+  {
+    id: "vote", title: "Pode votar?", level: "Condições",
+    statement: "Receba uma idade e informe se a pessoa já pode votar, considerando a idade mínima de 16 anos.", concept: "regra de negócio e comparação",
+    logicSteps: ["Receber a idade", "Comparar com 16", "Devolver verdadeiro ou falso"], functionName: "podeVotar",
+    tests: [{ args: [16], expected: true }, { args: [15], expected: false }, { args: [30], expected: true }],
+  },
+  {
+    id: "average", title: "Média de três notas", level: "Condições",
+    statement: "Calcule a média de três notas e devolva Aprovado quando ela for 7 ou mais; caso contrário, devolva Reprovado.", concept: "cálculo, variável intermediária e decisão",
+    logicSteps: ["Calcular a média", "Comparar a média com 7", "Devolver a situação"], functionName: "verificarAprovacao",
+    tests: [{ args: [8, 7, 9], expected: "Aprovado" }, { args: [5, 6, 4], expected: "Reprovado" }, { args: [7, 7, 7], expected: "Aprovado" }],
+  },
+  {
+    id: "discount", title: "Desconto na compra", level: "Condições",
+    statement: "Compras de 100 ou mais recebem 10% de desconto. Devolva o valor final da compra.", concept: "porcentagem, condição e valor final",
+    logicSteps: ["Receber o valor", "Verificar se chega a 100", "Aplicar o desconto ou manter o valor"], functionName: "calcularCompra",
+    tests: [{ args: [200], expected: 180 }, { args: [80], expected: 80 }, { args: [100], expected: 90 }],
+  },
+  {
+    id: "sumEven", title: "Somar somente os pares", level: "Repetições",
+    statement: "Receba uma lista de números e devolva a soma apenas dos valores pares.", concept: "repetição, filtro e acumulador",
+    logicSteps: ["Percorrer os números", "Verificar quais são pares", "Somar apenas os pares"], functionName: "somarPares",
+    tests: [{ args: [[1, 2, 3, 4]], expected: 6 }, { args: [[1, 3, 5]], expected: 0 }, { args: [[10, -2, 7]], expected: 8 }],
+  },
 ];
 
 const snippets: Record<string, Record<LanguageId, { starter: string; example: string; hint: string }>> = {
@@ -118,6 +148,61 @@ const snippets: Record<string, Record<LanguageId, { starter: string; example: st
     css: { starter: ".valores { /* organize os itens */ }\n.total { /* destaque o acumulado */ }", example: ".total { font-weight: 700; border-top: 1px solid; }", hint: "Destaque .total com peso, cor ou borda." },
     markdown: { starter: "## Soma\n\n- Valores: 1, 2, 3\n- Total: **?**", example: "- Valores: 2, 4\n- Total: **6**", hint: "Calcule o resultado e substitua o ponto de interrogação." },
   },
+  sign: {
+    pseudocode: { starter: "FUNÇÃO classificarNumero(numero)\n  SE numero > 0 ENTÃO RETORNE \"positivo\"\n  // verifique o caminho negativo\n  \n  RETORNE \"zero\"\nFIM FUNÇÃO", example: "SE temperatura > 30 ENTÃO RETORNE \"quente\"\nRETORNE \"amena\"", hint: "Depois do primeiro teste, verifique se numero < 0 e retorne \"negativo\"." },
+    python: { starter: "def classificarNumero(numero):\n    if numero > 0:\n        return \"positivo\"\n    # verifique o caminho negativo\n    pass\n    return \"zero\"", example: "def clima(temperatura):\n    if temperatura > 30:\n        return \"quente\"\n    return \"ameno\"", hint: "Use if numero < 0: e retorne \"negativo\"." },
+    javascript: { starter: "function classificarNumero(numero) {\n  if (numero > 0) return \"positivo\";\n  // verifique o caminho negativo\n  \n  return \"zero\";\n}", example: "function clima(temperatura) {\n  if (temperatura > 30) return \"quente\";\n  return \"ameno\";\n}", hint: "Teste numero < 0 e retorne \"negativo\"." },
+    typescript: { starter: "function classificarNumero(numero: number): string {\n  if (numero > 0) return \"positivo\";\n  // verifique o caminho negativo\n  \n  return \"zero\";\n}", example: "function clima(temperatura: number): string {\n  if (temperatura > 30) return \"quente\";\n  return \"ameno\";\n}", hint: "Teste numero < 0 e retorne \"negativo\"." },
+    java: { starter: "class Solucao {\n  static String classificarNumero(int numero) {\n    if (numero > 0) return \"positivo\";\n    // verifique o caminho negativo\n    \n    return \"zero\";\n  }\n}", example: "static String clima(int temperatura) {\n  if (temperatura > 30) return \"quente\";\n  return \"ameno\";\n}", hint: "Teste numero < 0 e retorne \"negativo\"." },
+    sql: { starter: "SELECT valor,\n  CASE\n    WHEN valor > 0 THEN 'positivo'\n    -- complete o caminho negativo\n    ELSE 'zero'\n  END AS classificacao\nFROM numeros;", example: "CASE WHEN idade >= 18 THEN 'adulto' ELSE 'menor' END", hint: "Adicione WHEN valor < 0 THEN 'negativo'." },
+    html: { starter: "<section class=\"classificacao\">\n  <!-- mostre positivo, negativo e zero -->\n</section>", example: "<section><p>Quente</p><p>Ameno</p></section>", hint: "Crie três parágrafos para os resultados possíveis." },
+    css: { starter: ".positivo { /* destaque */ }\n.negativo { /* destaque */ }\n.zero { /* destaque */ }", example: ".quente { color: orange; }\n.ameno { color: blue; }", hint: "Use uma cor ou peso diferente para cada classe." },
+    markdown: { starter: "## Classificação\n\n- Se for maior que zero: ...\n- Se for menor que zero: ...\n- Caso contrário: ...", example: "- Acima de 30: quente\n- Caso contrário: ameno", hint: "Complete os três caminhos da decisão." },
+  },
+  vote: {
+    pseudocode: { starter: "FUNÇÃO podeVotar(idade)\n  // compare a idade com o limite\n  \nFIM FUNÇÃO", example: "FUNÇÃO podeEntrar(idade)\n  RETORNE idade >= 18\nFIM FUNÇÃO", hint: "RETORNE idade >= 16." },
+    python: { starter: "def podeVotar(idade):\n    # compare a idade com o limite\n    pass", example: "def podeEntrar(idade):\n    return idade >= 18", hint: "Use return idade >= 16." },
+    javascript: { starter: "function podeVotar(idade) {\n  // compare a idade com o limite\n  \n}", example: "function podeEntrar(idade) {\n  return idade >= 18;\n}", hint: "Use return idade >= 16;" },
+    typescript: { starter: "function podeVotar(idade: number): boolean {\n  // compare a idade com o limite\n  \n}", example: "function podeEntrar(idade: number): boolean {\n  return idade >= 18;\n}", hint: "Use return idade >= 16;" },
+    java: { starter: "class Solucao {\n  static boolean podeVotar(int idade) {\n    // compare a idade com o limite\n    \n  }\n}", example: "static boolean podeEntrar(int idade) {\n  return idade >= 18;\n}", hint: "Use return idade >= 16;" },
+    sql: { starter: "SELECT nome, idade\nFROM pessoas\nWHERE -- condição para quem pode votar;", example: "SELECT nome FROM pessoas WHERE idade >= 18;", hint: "Use idade >= 16." },
+    html: { starter: "<section>\n  <!-- apresente os caminhos PODE VOTAR e AINDA NÃO -->\n</section>", example: "<section><p>Entrada permitida</p></section>", hint: "Mostre os dois resultados possíveis em parágrafos." },
+    css: { starter: ".pode-votar { /* estado permitido */ }\n.nao-pode { /* estado bloqueado */ }", example: ".permitido { color: green; }", hint: "Crie uma diferença visual entre os dois estados." },
+    markdown: { starter: "## Regra para votar\n\n- Se a idade for ...\n- Caso contrário ...", example: "- Se tiver 18 ou mais: pode entrar", hint: "Descreva a comparação com 16." },
+  },
+  average: {
+    pseudocode: { starter: "FUNÇÃO verificarAprovacao(nota1, nota2, nota3)\n  media <- (nota1 + nota2 + nota3) / 3\n  // compare a média com 7\n  \nFIM FUNÇÃO", example: "media <- (valor1 + valor2) / 2\nSE media >= 5 ENTÃO RETORNE \"ok\"\nRETORNE \"rever\"", hint: "Se media >= 7, retorne \"Aprovado\"; depois retorne \"Reprovado\"." },
+    python: { starter: "def verificarAprovacao(nota1, nota2, nota3):\n    media = (nota1 + nota2 + nota3) / 3\n    # compare a média com 7\n    pass", example: "media = (valor1 + valor2) / 2\nif media >= 5:\n    return \"ok\"\nreturn \"rever\"", hint: "Use if media >= 7, retorne \"Aprovado\" e, no outro caminho, \"Reprovado\"." },
+    javascript: { starter: "function verificarAprovacao(nota1, nota2, nota3) {\n  const media = (nota1 + nota2 + nota3) / 3;\n  // compare a média com 7\n  \n}", example: "const media = (valor1 + valor2) / 2;\nif (media >= 5) return \"ok\";\nreturn \"rever\";", hint: "Compare media >= 7 e retorne as duas situações." },
+    typescript: { starter: "function verificarAprovacao(nota1: number, nota2: number, nota3: number): string {\n  const media = (nota1 + nota2 + nota3) / 3;\n  // compare a média com 7\n  \n}", example: "const media: number = (valor1 + valor2) / 2;\nif (media >= 5) return \"ok\";\nreturn \"rever\";", hint: "Compare media >= 7 e retorne as duas situações." },
+    java: { starter: "class Solucao {\n  static String verificarAprovacao(int nota1, int nota2, int nota3) {\n    double media = (nota1 + nota2 + nota3) / 3.0;\n    // compare a média com 7\n    \n  }\n}", example: "double media = (valor1 + valor2) / 2.0;\nif (media >= 5) return \"ok\";\nreturn \"rever\";", hint: "Compare media >= 7 e retorne \"Aprovado\" ou \"Reprovado\"." },
+    sql: { starter: "SELECT aluno,\n  (nota1 + nota2 + nota3) / 3.0 AS media\n  -- classifique a situação\nFROM notas;", example: "CASE WHEN media >= 5 THEN 'ok' ELSE 'rever' END", hint: "Use CASE para comparar a média com 7." },
+    html: { starter: "<table>\n  <!-- apresente notas, média e situação -->\n</table>", example: "<table><tr><td>Média</td><td>8</td></tr></table>", hint: "Use uma linha para notas e outra para o resultado." },
+    css: { starter: ".aprovado { /* resultado positivo */ }\n.reprovado { /* resultado de atenção */ }", example: ".ok { font-weight: 700; }", hint: "Destaque visualmente as duas situações." },
+    markdown: { starter: "## Resultado\n\n- Notas: 8, 7, 9\n- Média: ...\n- Situação: ...", example: "- Valores: 6 e 8\n- Média: **7**", hint: "Calcule a média e descreva a decisão." },
+  },
+  discount: {
+    pseudocode: { starter: "FUNÇÃO calcularCompra(valor)\n  SE valor >= 100 ENTÃO\n    // aplique 10% de desconto\n  FIM SE\n  RETORNE valor\nFIM FUNÇÃO", example: "SE valor >= 50 ENTÃO RETORNE valor * 0.95\nRETORNE valor", hint: "No caminho do desconto, retorne valor * 0.90." },
+    python: { starter: "def calcularCompra(valor):\n    if valor >= 100:\n        # aplique 10% de desconto\n        pass\n    return valor", example: "if valor >= 50:\n    return valor * 0.95\nreturn valor", hint: "Dentro do if, use return valor * 0.90." },
+    javascript: { starter: "function calcularCompra(valor) {\n  if (valor >= 100) {\n    // aplique 10% de desconto\n  }\n  return valor;\n}", example: "if (valor >= 50) return valor * 0.95;\nreturn valor;", hint: "Dentro do if, use return valor * 0.90;" },
+    typescript: { starter: "function calcularCompra(valor: number): number {\n  if (valor >= 100) {\n    // aplique 10% de desconto\n  }\n  return valor;\n}", example: "if (valor >= 50) return valor * 0.95;\nreturn valor;", hint: "Dentro do if, use return valor * 0.90;" },
+    java: { starter: "class Solucao {\n  static double calcularCompra(double valor) {\n    if (valor >= 100) {\n      // aplique 10% de desconto\n    }\n    return valor;\n  }\n}", example: "if (valor >= 50) return valor * 0.95;\nreturn valor;", hint: "Dentro do if, use return valor * 0.90;" },
+    sql: { starter: "SELECT valor,\n  CASE WHEN valor >= 100 THEN -- valor com desconto\n  ELSE valor END AS valor_final\nFROM compras;", example: "CASE WHEN valor >= 50 THEN valor * 0.95 ELSE valor END", hint: "Use valor * 0.90 no caminho do desconto." },
+    html: { starter: "<section class=\"compra\">\n  <!-- mostre valor original, desconto e total -->\n</section>", example: "<section><p>Valor: 50</p><strong>Total: 47,50</strong></section>", hint: "Use parágrafos para os valores e strong para o total." },
+    css: { starter: ".valor-original { /* valor anterior */ }\n.valor-final { /* destaque o total */ }", example: ".valor-final { font-size: 1.5rem; font-weight: 700; }", hint: "Dê mais destaque ao valor final." },
+    markdown: { starter: "## Resumo da compra\n\n- Valor original: ...\n- Desconto: ...\n- Total: **...**", example: "- Valor: 50\n- Desconto: 5%\n- Total: **47,50**", hint: "Mostre os três passos do cálculo." },
+  },
+  sumEven: {
+    pseudocode: { starter: "FUNÇÃO somarPares(numeros)\n  total <- 0\n  PARA CADA numero EM numeros\n    SE numero % 2 IGUAL A 0 ENTÃO\n      // some apenas este número\n    FIM SE\n  FIM PARA\n  RETORNE total\nFIM FUNÇÃO", example: "total <- 0\nPARA CADA numero EM numeros\n  SE numero > 0 ENTÃO\n    total <- total + numero\n  FIM SE\nFIM PARA", hint: "Dentro da condição, atualize total com total + numero." },
+    python: { starter: "def somarPares(numeros):\n    total = 0\n    for numero in numeros:\n        if numero % 2 == 0:\n            # some apenas este número\n            pass\n    return total", example: "total = 0\nfor numero in numeros:\n    if numero > 0:\n        total = total + numero", hint: "Use total = total + numero dentro do if." },
+    javascript: { starter: "function somarPares(numeros) {\n  let total = 0;\n  for (const numero of numeros) {\n    if (numero % 2 === 0) {\n      // some apenas este número\n    }\n  }\n  return total;\n}", example: "let total = 0;\nfor (const numero of numeros) {\n  if (numero > 0) total = total + numero;\n}", hint: "Use total = total + numero dentro do if." },
+    typescript: { starter: "function somarPares(numeros: number[]): number {\n  let total = 0;\n  for (const numero of numeros) {\n    if (numero % 2 === 0) {\n      // some apenas este número\n    }\n  }\n  return total;\n}", example: "let total = 0;\nfor (const numero of numeros) {\n  if (numero > 0) total += numero;\n}", hint: "Use total = total + numero dentro do if." },
+    java: { starter: "class Solucao {\n  static int somarPares(int[] numeros) {\n    int total = 0;\n    for (int numero : numeros) {\n      if (numero % 2 == 0) {\n        // some apenas este número\n      }\n    }\n    return total;\n  }\n}", example: "int total = 0;\nfor (int numero : numeros) {\n  if (numero > 0) total += numero;\n}", hint: "Use total = total + numero dentro do if." },
+    sql: { starter: "SELECT SUM(valor) AS total_pares\nFROM numeros\nWHERE -- mantenha apenas os pares;", example: "SELECT SUM(valor) FROM numeros WHERE valor > 0;", hint: "Use valor % 2 = 0 no WHERE." },
+    html: { starter: "<ul class=\"numeros\">\n  <!-- destaque apenas os números pares -->\n</ul>\n<strong>Total: <!-- soma --></strong>", example: "<ul><li>1</li><li class=\"selecionado\">2</li></ul>", hint: "Liste os valores e destaque visualmente os pares." },
+    css: { starter: ".numero { /* estado comum */ }\n.numero.par { /* valor selecionado para a soma */ }", example: ".selecionado { background: lightgreen; }", hint: "Destaque a classe .par com cor ou peso." },
+    markdown: { starter: "## Soma dos pares\n\n- Valores: 1, 2, 3, 4\n- Pares encontrados: ...\n- Soma: **...**", example: "- Valores positivos: 2, 4\n- Soma: **6**", hint: "Identifique 2 e 4 antes de calcular a soma." },
+  },
 };
 
 function translateTypeScript(code: string) {
@@ -133,12 +218,14 @@ function translateJava(code: string) {
     .replace(/int\[\]\s+(\w+)\s*=\s*new\s+int\[(\d+)\];/g, "let $1 = new Array($2);")
     .replace(/for\s*\(int\s+(\w+)\s*:\s*(\w+)\)/g, "for (const $1 of $2)")
     .replace(/for\s*\(int\s+/g, "for (let ")
-    .replace(/\bint\s+(\w+)\s*=/g, "let $1 =");
+    .replace(/\bint\s+(\w+)\s*=/g, "let $1 =")
+    .replace(/\b(double|String|boolean)\s+(\w+)\s*=/g, "let $2 =");
 }
 
 function translatePseudocode(code: string) {
   return code
     .replace(/\/\/.*$/gm, "")
+    .replace(/IGUAL A/gi, "===")
     .replace(/RETORNE\s+([^\n=]+)\s*=\s*([^\n]+)/gi, "return $1 === $2")
     .replace(/FUNÇÃO\s+(\w+)\(([^)]*)\)/gi, "function $1($2) {")
     .replace(/FIM FUNÇÃO/gi, "}")
@@ -188,7 +275,16 @@ function reviewSupportingLanguage(code: string, language: LanguageId, lesson: Le
   const lower = code.toLowerCase();
   const checks: Record<LanguageId, boolean> = {
     pseudocode: false, python: false, javascript: false, typescript: false, java: false,
-    sql: lower.includes("select") && (lesson.id === "double" ? lower.includes("* 2") : lesson.id === "even" ? lower.includes("% 2") : lesson.id === "larger" ? lower.includes("max(") : lesson.id === "table" ? lower.includes("*") : lower.includes("sum(")),
+    sql: lower.includes("select") && (
+      lesson.id === "double" ? lower.includes("* 2")
+        : lesson.id === "even" ? lower.includes("% 2")
+          : lesson.id === "larger" ? lower.includes("max(")
+            : lesson.id === "table" ? lower.includes("*")
+              : lesson.id === "sign" || lesson.id === "average" || lesson.id === "discount" ? lower.includes("case")
+                : lesson.id === "vote" ? lower.includes(">= 16")
+                  : lesson.id === "sumEven" ? lower.includes("sum(") && lower.includes("% 2")
+                    : lower.includes("sum(")
+    ),
     html: /<(ol|ul|table|section|div)/.test(lower) && /<(li|tr|p|span|strong)/.test(lower),
     css: lower.includes("{") && lower.includes(":") && lower.includes("}"),
     markdown: /(^|\n)(1\.|-|\|)/.test(code),
@@ -440,7 +536,7 @@ export default function Home() {
           <div className="editor-card">
             <div className="editor-top"><span><i className="dot red" /><i className="dot yellow" /><i className="dot green" /> desafio.{languageInfo.extension}</span><button onClick={() => setCode(snippet.starter)}>Recomeçar</button></div>
             <div className="editor-body">
-              <div className="answer-line-highlight" style={{ top: `${16 + answerLine * 18.7}px` }} aria-hidden="true"><span>RESPONDA AQUI · LINHA {answerLine + 1}</span></div>
+              <div className="answer-line-highlight" style={{ top: `${20 + answerLine * 24.5}px` }} aria-hidden="true"><span>RESPONDA AQUI · LINHA {answerLine + 1}</span></div>
               <div className="line-numbers">{Array.from({ length: Math.max(code.split("\n").length, 5) }, (_, i) => <span key={i}>{i + 1}</span>)}</div>
               <textarea value={code} onChange={(event) => setCode(event.target.value)} spellCheck={false} aria-label={`Editor de ${languageInfo.label}`} />
             </div>
@@ -453,6 +549,96 @@ export default function Home() {
             </div>
           </div>
           <div className="run-row"><button className="run-button" onClick={execute} disabled={running}><span>▶</span>{running ? (language === "python" ? "Carregando Python..." : "Verificando...") : languageInfo.executable ? "Executar e testar" : "Analisar estrutura"}</button><small>{languageInfo.executable ? "Os testes comparam sua saída com exemplos esperados." : "Este modo ensina o papel da tecnologia na solução."}</small></div>
+          <footer className="learning-footer" id="guia-logica">
+            <details>
+              <summary>
+                <span><small>BIBLIOTECA DE APOIO</small><strong>Lógica de programação: aprenda a pensar antes do código</strong></span>
+                <b>Ler artigo +</b>
+              </summary>
+              <article>
+                <header>
+                  <span>GUIA / FUNDAMENTOS</span>
+                  <h2>Programar começa com um problema, não com uma linguagem.</h2>
+                  <p>Python, JavaScript, SQL, Excel e ferramentas de automação escrevem instruções de maneiras diferentes, mas todas dependem da mesma habilidade: organizar o pensamento em passos claros.</p>
+                </header>
+
+                <section>
+                  <h3>As quatro perguntas que vêm antes do código</h3>
+                  <div className="thinking-grid">
+                    <div><b>01 / Entrada</b><p>O que eu vou receber?</p></div>
+                    <div><b>02 / Processo</b><p>O que preciso calcular ou transformar?</p></div>
+                    <div><b>03 / Decisão</b><p>Existe alguma condição ou escolha?</p></div>
+                    <div><b>04 / Saída</b><p>O que devo entregar no final?</p></div>
+                  </div>
+                </section>
+
+                <section className="article-example">
+                  <div>
+                    <span>EXEMPLO 01</span>
+                    <h3>Descobrir se um número é par</h3>
+                    <ol><li>Receber o número.</li><li>Calcular o resto da divisão por 2.</li><li>Comparar o resto com zero.</li></ol>
+                    <p>O símbolo <code>%</code> calcula o resto. A regra precisa funcionar para qualquer número, não somente para um exemplo específico.</p>
+                  </div>
+                  <pre><code>{`def eh_par(numero):
+    return numero % 2 == 0
+
+eh_par(8)  # True
+eh_par(5)  # False`}</code></pre>
+                </section>
+
+                <section className="article-example">
+                  <div>
+                    <span>EXEMPLO 02</span>
+                    <h3>Tomar uma decisão</h3>
+                    <p>Uma pessoa só pode entrar se tiver 18 anos ou mais. Primeiro recebemos a idade, depois comparamos com a regra e finalmente devolvemos uma resposta.</p>
+                  </div>
+                  <pre><code>{`def pode_entrar(idade):
+    if idade >= 18:
+        return "Entrada permitida"
+
+    return "Entrada não permitida"`}</code></pre>
+                </section>
+
+                <section className="article-example">
+                  <div>
+                    <span>EXEMPLO 03</span>
+                    <h3>Combinar cálculo e condição</h3>
+                    <p>Compras de R$ 100 ou mais recebem 10% de desconto. O valor muda, mas a sequência de raciocínio continua igual.</p>
+                  </div>
+                  <pre><code>{`def calcular_compra(valor):
+    if valor >= 100:
+        desconto = valor * 0.10
+        return valor - desconto
+
+    return valor`}</code></pre>
+                </section>
+
+                <section>
+                  <h3>A lógica existe em qualquer ferramenta</h3>
+                  <p>Imagine uma automação que avisa quando uma tarefa está atrasada. A ferramenta pode ser Python, uma planilha ou um sistema de automação. O plano continua sendo:</p>
+                  <div className="logic-flow"><span>Buscar tarefas</span><i>→</i><span>Comparar datas</span><i>→</i><span>Verificar conclusão</span><i>→</i><span>Enviar aviso</span></div>
+                  <p className="article-callout"><strong>Entrada → processamento → decisão → resultado.</strong> Quando você consegue explicar a solução com palavras simples, escrever o código fica muito mais fácil.</p>
+                </section>
+
+                <section className="article-example">
+                  <div>
+                    <span>EXEMPLO 04</span>
+                    <h3>Média de três notas</h3>
+                    <p>Separe o problema: receber três notas, calcular a média, comparar com 7 e devolver a situação.</p>
+                  </div>
+                  <pre><code>{`def verificar_aprovacao(nota1, nota2, nota3):
+    media = (nota1 + nota2 + nota3) / 3
+
+    if media >= 7:
+        return "Aprovado"
+
+    return "Reprovado"`}</code></pre>
+                </section>
+
+                <blockquote>Não tente memorizar todas as respostas. Treine a capacidade de dividir problemas grandes em passos pequenos. Essa habilidade funciona em qualquer linguagem ou ferramenta.</blockquote>
+              </article>
+            </details>
+          </footer>
         </section>
       </section>
     </main>

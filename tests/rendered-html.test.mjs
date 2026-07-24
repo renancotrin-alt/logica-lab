@@ -34,6 +34,9 @@ test("server-renders the Lógica Lab tutor", async () => {
   assert.match(html, /Exemplo ou teste\?/);
   assert.match(html, /Explique meu código/);
   assert.match(html, /Editor de Lógica pura/);
+  assert.match(html, /Lógica de programação: aprenda a pensar antes do código/);
+  assert.match(html, /Positivo, negativo ou zero/);
+  assert.match(html, /Somar somente os pares/);
   assert.doesNotMatch(html, /codex-preview/i);
 });
 
@@ -50,6 +53,8 @@ test("keeps contextual tutoring and safe chat scrolling", async () => {
   assert.match(page, /className="answer-line-highlight"/);
   assert.match(page, /className=\{`terminal-panel/);
   assert.match(page, /RESPONDA AQUI · LINHA/);
+  assert.match(page, /id="guia-logica"/);
+  assert.match(page, /Entrada → processamento → decisão → resultado/);
   assert.match(
     page,
     /useEffect\(\(\) => \{\s*chatEnd\.current\?\.scrollIntoView\(\{ behavior: "smooth" \}\);\s*\}, \[messages\]\);/,
@@ -57,4 +62,5 @@ test("keeps contextual tutoring and safe chat scrolling", async () => {
   assert.match(css, /\.message span \{[^}]*white-space:\s*pre-line;/);
   assert.match(css, /\.editor-card \{[^}]*background:\s*var\(--terminal\)/);
   assert.match(css, /\.answer-line-highlight \{[^}]*var\(--code-green\)/);
+  assert.match(css, /\.learning-footer details \{/);
 });
