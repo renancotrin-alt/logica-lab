@@ -1,6 +1,6 @@
 # Lógica Lab
 
-![Capa do Lógica Lab](./public/og-v3.png)
+![Capa do Lógica Lab](./public/og-v4.png)
 
 Tutor interativo em português para aprender **lógica de programação antes de decorar sintaxe**. O projeto apresenta desafios curtos, exemplos relacionados, dicas graduais e testes automáticos em diferentes linguagens.
 
